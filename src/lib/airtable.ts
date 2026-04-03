@@ -7,7 +7,7 @@ const base = new Airtable({
 export const TABLES = {
   CLIENTS: "tblhm2PtG3en6ypxF",
   DOCUMENTS: "tblsZalGrCHyVoP9a",
-  LIGNES: "tblq6y5hnbOuecbgC",
+  LIGNES_FACTURATION: "tblq6y5hnbOuecbgC",
   SERVICES: "tblgdIuRWn9v3MDTY",
   PROJETS: "tbl8ttAlGsdbzs6GM",
   SIMULATIONS: "tblXkS1tzQNg9j2c7"

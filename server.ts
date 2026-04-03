@@ -240,38 +240,56 @@ export async function createServer() {
     }
   });
 
-  // Route pour créer un document (devis/audit)
-  app.post("/api/documents", async (req, res) => {
+  // Route pour créer un document (devis/facture) avec ses lignes
+  app.post("/api/documents/create", async (req, res) => {
     try {
-      const body = req.body;
-      console.log("DEBUG POST DOCUMENT - BODY:", body);
+      const { clientId, type, items, totalHT, date } = req.body;
+      console.log("DEBUG CREATE DOCUMENT - BODY:", req.body);
 
-      const newRecord = await base(TABLES.DOCUMENTS).create([
+      // 1. Créer le Document
+      const documentRecord = await base(TABLES.DOCUMENTS).create([
         {
           fields: {
-            "ID Document": body.nom || body.Nom || `DOC-${Date.now()}`,
-            "Type": body.type || "Devis",
-            "Statut": body.statut || body.status || "Brouillon",
-            "Total HT": body.total || body.Montant || 0,
-            "Date d'Émission": body.date || new Date().toISOString().split('T')[0],
-            "Client": body.clientId ? [body.clientId] : undefined
+            "ID Document": `${type === 'Facture' ? 'FAC' : 'DEV'}-${Date.now()}`,
+            "Type": type,
+            "Statut": "Brouillon",
+            "Total HT": totalHT || 0,
+            "Date d'Émission": date || new Date().toISOString().split('T')[0],
+            "Client": clientId ? [clientId] : undefined
           }
         }
       ]);
-      
-      console.log("SUCCESS: Document created in Airtable");
-      const r = newRecord[0];
+
+      const documentId = documentRecord[0].id;
+      console.log("SUCCESS: Document created, ID:", documentId);
+
+      // 2. Créer les Lignes de Facturation
+      if (items && items.length > 0) {
+        const lineRecords = items.map((item: any) => ({
+          fields: {
+            "Description": item.description || "Ligne de service",
+            "Quantité": item.quantity || 1,
+            "Prix Unitaire HT": item.price || 0,
+            "Lien Document": [documentId],
+            "Service": item.serviceId ? [item.serviceId] : undefined,
+            "Projet": item.projectId ? [item.projectId] : undefined
+          }
+        }));
+
+        // Airtable create supporte max 10 records par appel
+        for (let i = 0; i < lineRecords.length; i += 10) {
+          await base(TABLES.LIGNES_FACTURATION).create(lineRecords.slice(i, i + 10));
+        }
+        console.log(`SUCCESS: ${items.length} lines created`);
+      }
+
       res.json({
-        id: r.id,
-        Nom: r.get("ID Document"),
-        Type: r.get("Type"),
-        Statut: r.get("Statut"),
-        Montant: r.get("Total HT"),
-        Date: r.get("Date d'Émission"),
-        Description: r.get("Description") || ""
+        id: documentId,
+        status: "success",
+        message: "Document et lignes créés avec succès"
       });
     } catch (error: any) {
-      console.error("DETAILED AIRTABLE ERROR (DOCUMENT):", error);
+      console.error("DETAILED AIRTABLE ERROR (DOC CREATE):", error);
       res.status(500).json({ error: error.message });
     }
   });

@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { motion } from 'motion/react';
-import { FileText, Plus, Search, Download, Filter, CheckCircle, Clock, AlertCircle } from 'lucide-react';
-import AddDocumentModal from '../components/AddDocumentModal';
+import { FileText, Plus, Search, Download, Filter, CheckCircle, Clock, AlertCircle, RefreshCw } from 'lucide-react';
+import AdvancedInvoiceForm from '../components/AdvancedInvoiceForm';
 
 export default function Invoicing() {
   const [documents, setDocuments] = useState<any[]>([]);
@@ -9,20 +9,22 @@ export default function Invoicing() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
 
-  useEffect(() => {
-    const fetchDocs = async () => {
-      try {
-        const response = await fetch('/api/documents');
-        const data = await response.json();
-        setDocuments(Array.isArray(data) ? data : []);
-      } catch (error) {
-        console.error("Failed to fetch documents:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchDocs();
+  const fetchDocs = useCallback(async () => {
+    setLoading(true);
+    try {
+      const response = await fetch('/api/documents');
+      const data = await response.json();
+      setDocuments(Array.isArray(data) ? data : []);
+    } catch (error) {
+      console.error("Failed to fetch documents:", error);
+    } finally {
+      setLoading(false);
+    }
   }, []);
+
+  useEffect(() => {
+    fetchDocs();
+  }, [fetchDocs]);
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -33,10 +35,6 @@ export default function Invoicing() {
       default:
         return <span className="flex items-center gap-1 text-[10px] font-black uppercase bg-gray-500/10 text-gray-400 px-2 py-1 rounded-md"><AlertCircle size={10}/> Brouillon</span>;
     }
-  };
-
-  const handleDocumentAdded = (newDoc: any) => {
-    setDocuments((prev) => [newDoc, ...prev]);
   };
 
   const filteredDocs = documents.filter(doc => 
@@ -52,6 +50,13 @@ export default function Invoicing() {
           <p className="text-xs text-gray-400">Gérez vos documents financiers synchronisés avec Airtable.</p>
         </div>
         <div className="flex gap-2">
+          <button 
+            onClick={fetchDocs}
+            className="bg-white/5 border border-doulia-border text-white p-2 rounded-xl hover:bg-white/10 transition-colors"
+            title="Actualiser"
+          >
+            <RefreshCw size={16} className={loading ? 'animate-spin' : ''} />
+          </button>
           <button className="bg-white/5 border border-doulia-border text-white px-4 py-2 rounded-xl font-black text-xs flex items-center gap-2 hover:bg-white/10 transition-colors">
             <Filter size={16} /> Filtrer
           </button>
@@ -81,7 +86,7 @@ export default function Invoicing() {
           </div>
         </div>
 
-        {loading ? (
+        {loading && documents.length === 0 ? (
           <div className="p-12 text-center text-neon-green animate-pulse font-bold text-xs">Synchronisation...</div>
         ) : (
           <div className="overflow-x-auto">
@@ -125,7 +130,7 @@ export default function Invoicing() {
                     </td>
                   </tr>
                 ))}
-                {documents.length === 0 && (
+                {!loading && filteredDocs.length === 0 && (
                   <tr>
                     <td colSpan={5} className="px-5 py-12 text-center text-gray-500 italic text-xs">
                       Aucun document trouvé.
@@ -137,10 +142,10 @@ export default function Invoicing() {
           </div>
         )}
       </div>
-      <AddDocumentModal 
+      <AdvancedInvoiceForm 
         isOpen={isModalOpen} 
         onClose={() => setIsModalOpen(false)} 
-        onDocumentAdded={handleDocumentAdded} 
+        onSuccess={fetchDocs} 
       />
     </div>
   );

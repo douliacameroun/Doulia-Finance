@@ -13,7 +13,6 @@ export const TABLES = {
   SIMULATIONS: "tblXkS1tzQNg9j2c7"
 };
 
-// CETTE FONCTION EST LA CLÉ : Elle traduit Airtable vers ton site
 export const mapClient = (record: any) => ({
   id: record.id,
   name: record.get("Nom de l'Entreprise") || "Nom Manquant",

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion } from 'motion/react';
 import { FileText, Plus, Search, Download, Filter, CheckCircle, Clock, AlertCircle, RefreshCw } from 'lucide-react';
-import AdvancedInvoiceForm from '../components/AdvancedInvoiceForm';
+import InvoiceForm from '../components/InvoiceForm';
 
 export default function Invoicing() {
   const [documents, setDocuments] = useState<any[]>([]);
@@ -142,7 +142,7 @@ export default function Invoicing() {
           </div>
         )}
       </div>
-      <AdvancedInvoiceForm 
+      <InvoiceForm 
         isOpen={isModalOpen} 
         onClose={() => setIsModalOpen(false)} 
         onSuccess={fetchDocs} 

@@ -1,12 +1,1 @@
-{
-  "rewrites": [
-    {
-      "source": "/api/:path*",
-      "destination": "/api/:path*"
-    },
-    {
-      "source": "/(.*)",
-      "destination": "/index.html"
-    }
-  ]
-}
+{\n  "buildCommand": "npm run build",\n  "outputDirectory": "dist",\n  "env": {\n    "API_KEY": "your_api_key_here",\n    "ANOTHER_ENV_VAR": "value_here"\n  },\n  "functions": {\n    "memory": 128,\n    "maxDuration": 10\n  }\n}

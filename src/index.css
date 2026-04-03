@@ -1,0 +1,90 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --color-neon-green: #32CD32;
+  --color-doulia-midnight: #000B18;
+  --color-doulia-dark: #000B18;
+  --color-doulia-card: #001529;
+  --color-doulia-border: #002A4D;
+  --color-doulia-lime: #32CD32;
+  --color-doulia-white: #FFFFFF;
+}
+
+@layer base {
+  body {
+    @apply font-sans bg-doulia-midnight text-white antialiased;
+  }
+  
+  /* Global reduction of sizes */
+  button {
+    @apply text-sm py-2 px-4 transition-all duration-300;
+  }
+  
+  h1 { @apply text-2xl font-black; }
+  h2 { @apply text-xl font-bold; }
+  h3 { @apply text-lg font-bold; }
+  
+  input, select, textarea {
+    @apply text-sm py-2 px-3;
+  }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 4px;
+}
+::-webkit-scrollbar-track {
+  @apply bg-transparent;
+}
+::-webkit-scrollbar-thumb {
+  @apply bg-doulia-border rounded-full;
+}
+
+/* Custom Markdown Styling to hide symbols */
+.markdown-body {
+  @apply text-xs leading-relaxed text-gray-200;
+}
+
+.markdown-body strong {
+  @apply text-white font-bold;
+}
+
+.markdown-body h1, .markdown-body h2, .markdown-body h3 {
+  @apply font-bold mt-3 mb-1 text-white;
+}
+
+.markdown-body h1 { @apply text-base; }
+.markdown-body h2 { @apply text-sm; }
+.markdown-body h3 { @apply text-xs; }
+
+.markdown-body p {
+  @apply mb-2;
+}
+
+.markdown-body ul {
+  @apply list-none pl-0 mb-2 space-y-1;
+}
+
+.markdown-body li {
+  @apply relative pl-4;
+}
+
+.markdown-body li::before {
+  content: "•";
+  @apply absolute left-0 text-neon-green font-bold;
+}
+
+/* AI Effects */
+.ai-glow {
+  box-shadow: 0 0 20px rgba(50, 205, 50, 0.15);
+}
+
+.ai-border-glow {
+  border-color: rgba(50, 205, 50, 0.3);
+}
+
+.glass-effect {
+  @apply bg-white/5 backdrop-blur-md border border-white/10;
+}

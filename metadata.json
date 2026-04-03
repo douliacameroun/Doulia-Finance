@@ -1,0 +1,5 @@
+{
+  "name": "DOULIA Finance Hub v2",
+  "description": "Plateforme de gestion financière et simulateur de ROI pour DOULIA, avec assistant IA Douly CFO.",
+  "requestFramePermissions": ["microphone"]
+}

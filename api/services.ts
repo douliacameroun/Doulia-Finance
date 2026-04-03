@@ -1,6 +1,7 @@
-import base, { TABLES } from '../lib/airtable.ts';
+import { VercelRequest, VercelResponse } from '@vercel/node';
+import base, { TABLES } from '../lib/airtable';
 
-export default async function handler(req: any, res: any) {
+export default async (req: VercelRequest, res: VercelResponse) => {
   if (req.method !== 'GET') return res.status(405).send('Method Not Allowed');
   
   try {
@@ -19,4 +20,4 @@ export default async function handler(req: any, res: any) {
     console.error("API SERVICES ERROR:", error);
     res.status(500).json({ error: error.message });
   }
-}
+};

@@ -2,6 +2,8 @@ import { VercelRequest, VercelResponse } from '@vercel/node';
 import base, { TABLES } from '../lib/airtable';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
+  res.setHeader('Content-Type', 'application/json');
+  
   if (req.method === 'GET') {
     try {
       const records = await base(TABLES.DOCUMENTS).select().all();
@@ -68,7 +70,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return res.status(500).json({ error: error.message });
     }
   } else {
-    return res.status(405).send('Method Not Allowed');
+    res.setHeader('Allow', ['GET', 'POST']);
+    return res.status(405).json({ error: 'Method Not Allowed' });
   }
 }
 

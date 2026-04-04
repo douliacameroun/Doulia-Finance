@@ -2,7 +2,12 @@ import { VercelRequest, VercelResponse } from '@vercel/node';
 import base, { TABLES } from '../lib/airtable';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
-  if (req.method !== 'GET') return res.status(405).send('Method Not Allowed');
+  res.setHeader('Content-Type', 'application/json');
+  
+  if (req.method !== 'GET') {
+    res.setHeader('Allow', ['GET']);
+    return res.status(405).json({ error: 'Method Not Allowed' });
+  }
   
   try {
     const [documents, projets, simulations, clients] = await Promise.all([

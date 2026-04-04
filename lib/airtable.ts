@@ -1,7 +1,13 @@
 import Airtable from 'airtable';
 
+const airtableKey = process.env.AIRTABLE_API_KEY;
+
+if (!airtableKey) {
+  console.error("ERREUR : AIRTABLE_API_KEY est manquante dans les variables d'environnement.");
+}
+
 const base = new Airtable({ 
-  apiKey: process.env.AIRTABLE_API_KEY 
+  apiKey: airtableKey 
 }).base('appw5t8naTirx4fE0');
 
 export const TABLES = {

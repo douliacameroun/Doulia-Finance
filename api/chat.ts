@@ -6,26 +6,29 @@ import base, { TABLES } from '../lib/airtable';
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   res.setHeader('Content-Type', 'application/json');
   
+  const airtableKey = process.env.AIRTABLE_API_KEY;
+  const geminiKey = process.env.GEMINI_API_KEY || process.env.API_KEY;
+  const tavilyKey = process.env.TAVILY_API_KEY;
+
+  if (!airtableKey) {
+    return res.status(500).json({ error: "AIRTABLE_API_KEY non configurée." });
+  }
+
   if (req.method !== 'POST') {
     res.setHeader('Allow', ['POST']);
     return res.status(405).json({ error: 'Method Not Allowed' });
   }
 
   const { messages } = req.body;
-  let apiKey = process.env.GEMINI_API_KEY;
 
-  if (!apiKey || apiKey === "MY_GEMINI_API_KEY" || apiKey === "") {
-    apiKey = process.env.API_KEY;
-  }
-
-  if (!apiKey || apiKey === "MY_GEMINI_API_KEY" || apiKey === "") {
+  if (!geminiKey || geminiKey === "MY_GEMINI_API_KEY" || geminiKey === "") {
     console.error("ERREUR : GEMINI_API_KEY est manquante ou invalide.");
     return res.status(500).json({ error: "Clé API Gemini non configurée. Veuillez l'ajouter dans les Secrets de l'AI Studio sous le nom GEMINI_API_KEY." });
   }
 
   try {
     console.log("DEBUG CHAT - Messages reçus:", messages?.length);
-    const ai = new GoogleGenAI({ apiKey });
+    const ai = new GoogleGenAI({ apiKey: geminiKey });
     
     let cleanedMessages = Array.isArray(messages) ? [...messages] : [];
     if (cleanedMessages.length > 0 && cleanedMessages[0].role === 'model') {
@@ -94,7 +97,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           toolData = records.map(r => r.fields);
         } else if (call.name === "webSearch") {
           const query = (call.args as any).query;
-          const tavilyKey = process.env.TAVILY_API_KEY;
           if (tavilyKey) {
             const searchResponse = await axios.post("https://api.tavily.com/search", {
               api_key: tavilyKey,

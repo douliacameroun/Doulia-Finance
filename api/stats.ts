@@ -4,6 +4,11 @@ import base, { TABLES } from '../lib/airtable';
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   res.setHeader('Content-Type', 'application/json');
   
+  const airtableKey = process.env.AIRTABLE_API_KEY;
+  if (!airtableKey) {
+    return res.status(500).json({ error: "AIRTABLE_API_KEY non configurée." });
+  }
+  
   if (req.method !== 'GET') {
     res.setHeader('Allow', ['GET']);
     return res.status(405).json({ error: 'Method Not Allowed' });

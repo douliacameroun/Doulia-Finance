@@ -43,6 +43,7 @@ interface BudgetItem {
 export default function BudgetPage() {
   const [budget, setBudget] = useState<BudgetItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterType, setFilterType] = useState<'All' | 'Revenu' | 'Dépense'>('All');
 
@@ -51,12 +52,19 @@ export default function BudgetPage() {
   }, []);
 
   const fetchBudget = async () => {
+    setLoading(true);
+    setError(null);
     try {
       const response = await fetch('/api/budget');
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || `Erreur serveur: ${response.status}`);
+      }
       const data = await response.json();
       setBudget(data);
-    } catch (error) {
-      console.error("Error fetching budget:", error);
+    } catch (err: any) {
+      console.error("Error fetching budget:", err);
+      setError(err.message || "Une erreur est survenue lors de la récupération du budget.");
     } finally {
       setLoading(false);
     }
@@ -103,6 +111,24 @@ export default function BudgetPage() {
     return (
       <div className="flex items-center justify-center h-full">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-doulia-lime"></div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex flex-col items-center justify-center h-full space-y-4 p-8 text-center">
+        <div className="p-4 bg-red-400/10 rounded-full text-red-400">
+          <AlertCircle size={48} />
+        </div>
+        <h2 className="text-2xl font-bold text-white">Erreur de chargement</h2>
+        <p className="text-gray-400 max-w-md">{error}</p>
+        <button 
+          onClick={fetchBudget}
+          className="px-6 py-2 bg-doulia-lime text-doulia-dark font-bold rounded-xl hover:bg-doulia-lime/90 transition-all"
+        >
+          Réessayer
+        </button>
       </div>
     );
   }

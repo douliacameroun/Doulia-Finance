@@ -35,7 +35,10 @@ async function createServer() {
 
   // VITE MIDDLEWARE (DEV ONLY)
   const vite = await createViteServer({
-    server: { middlewareMode: true },
+    server: { 
+      middlewareMode: true,
+      hmr: false, // Explicitly disable HMR
+    },
     appType: "spa",
   });
   app.use(vite.middlewares);

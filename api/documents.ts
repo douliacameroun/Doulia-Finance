@@ -23,7 +23,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       })) : []);
     } catch (error: any) {
       console.error("Documents API Error:", error);
-      return res.status(500).json({ error: error.message });
+      return res.status(500).json({ error: error.message, stack: error.stack });
     }
   } else if (req.method === 'POST') {
     try {
@@ -72,7 +72,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return res.status(200).json({ success: true, id: docId });
     } catch (error: any) {
       console.error("API DOCUMENTS ERROR:", error);
-      return res.status(500).json({ error: error.message });
+      return res.status(500).json({ error: error.message, stack: error.stack });
     }
   } else {
     res.setHeader('Allow', ['GET', 'POST']);

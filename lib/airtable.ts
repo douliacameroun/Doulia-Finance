@@ -16,7 +16,8 @@ export const TABLES = {
   LIGNES_FACTURATION: "tblq6y5hnbOuecbgC",
   SERVICES: "tblgdIuRWn9v3MDTY",
   PROJETS: "tbl8ttAlGsdbzs6GM",
-  SIMULATIONS: "tblXkS1tzQNg9j2c7"
+  SIMULATIONS: "tblXkS1tzQNg9j2c7",
+  BUDGET: "tblw9TLaxLC6ryP4V"
 };
 
 export const mapClient = (record: any) => ({

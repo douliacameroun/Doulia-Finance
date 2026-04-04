@@ -26,7 +26,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return res.status(200).json(projets);
     } catch (error: any) {
       console.error("API PROJETS ERROR:", error);
-      return res.status(500).json({ error: error.message });
+      return res.status(500).json({ error: error.message, stack: error.stack });
     }
   } else if (req.method === 'POST') {
     try {
@@ -45,7 +45,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return res.status(201).json(newRecord[0]);
     } catch (error: any) {
       console.error("API PROJETS POST ERROR:", error);
-      return res.status(500).json({ error: error.message });
+      return res.status(500).json({ error: error.message, stack: error.stack });
     }
   } else {
     res.setHeader('Allow', ['GET', 'POST']);

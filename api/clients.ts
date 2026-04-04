@@ -16,7 +16,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       const data = records.map(r => mapClient(r));
       return res.status(200).json(data);
     } catch (error: any) {
-      return res.status(500).json({ error: error.message });
+      return res.status(500).json({ error: error.message, stack: error.stack });
     }
   } else if (req.method === 'POST') {
     try {
@@ -32,7 +32,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       }]);
       return res.status(201).json(mapClient(newRecord[0]));
     } catch (error: any) {
-      return res.status(500).json({ error: error.message });
+      return res.status(500).json({ error: error.message, stack: error.stack });
     }
   } else {
     res.setHeader('Allow', ['GET', 'POST']);

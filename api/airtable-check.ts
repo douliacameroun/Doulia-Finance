@@ -25,7 +25,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(500).json({ 
       status: "error", 
       message: "Échec de la connexion Airtable", 
-      error: error.message 
+      error: error.message,
+      stack: error.stack
     });
   }
 }

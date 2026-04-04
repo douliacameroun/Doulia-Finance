@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { LayoutDashboard, Calculator, Users, Receipt, Settings, LogOut, TrendingUp, Briefcase, Box } from 'lucide-react';
+import { LayoutDashboard, Calculator, Users, Receipt, Settings, LogOut, TrendingUp, Briefcase, Box, Wallet } from 'lucide-react';
 import { motion } from 'motion/react';
 
 export default function Sidebar() {
@@ -11,6 +11,7 @@ export default function Sidebar() {
     { icon: Receipt, label: 'Facturation & Devis', path: '/facturation' },
     { icon: Box, label: 'Catalogue Services', path: '/services' },
     { icon: Briefcase, label: 'Projets Sur Mesure', path: '/projets' },
+    { icon: Wallet, label: 'Gestion Budget', path: '/budget' },
   ];
 
   return (

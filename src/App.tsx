@@ -7,6 +7,7 @@ import Clients from './pages/Clients';
 import Invoicing from './pages/Invoicing';
 import Services from './pages/Services';
 import Projects from './pages/Projects';
+import BudgetPage from './pages/BudgetPage';
 import ChatWidget from './components/ChatWidget';
 
 export default function App() {
@@ -25,6 +26,7 @@ export default function App() {
             <Route path="/facturation" element={<Invoicing />} />
             <Route path="/services" element={<Services />} />
             <Route path="/projets" element={<Projects />} />
+            <Route path="/budget" element={<BudgetPage />} />
           </Routes>
         </main>
 

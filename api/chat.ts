@@ -57,6 +57,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       parameters: { type: Type.OBJECT, properties: {} }
     };
 
+    const getBudget = {
+      name: "getBudget",
+      description: "Récupère les données budgétaires (revenus, dépenses, écarts) pour analyse.",
+      parameters: { type: Type.OBJECT, properties: {} }
+    };
+
     const webSearch = {
       name: "webSearch",
       description: "Effectue une recherche sur le web pour obtenir des informations récentes ou externes (fiscalité, actualités, etc.).",
@@ -76,8 +82,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       model: "gemini-3-flash-preview",
       contents: cleanedMessages,
       config: {
-        systemInstruction: "Tu es Douly CFO, l'assistant financier expert de DOULIA. Ton rôle est d'analyser les données financières de Marc pour l'aider à piloter son entreprise au Cameroun.",
-        tools: [{ functionDeclarations: [getCatalogue, getClients, getDocuments, webSearch] }]
+        systemInstruction: "Tu es Douly CFO, l'assistant financier expert de DOULIA. Ton rôle est d'analyser les données financières de Marc pour l'aider à piloter son entreprise au Cameroun. Tu as accès aux clients, au catalogue, aux documents et au budget.",
+        tools: [{ functionDeclarations: [getCatalogue, getClients, getDocuments, getBudget, webSearch] }]
       }
     });
 
@@ -94,6 +100,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           toolData = records.map(r => r.fields);
         } else if (call.name === "getDocuments") {
           const records = await base(TABLES.DOCUMENTS).select().all();
+          toolData = records.map(r => r.fields);
+        } else if (call.name === "getBudget") {
+          const records = await base(TABLES.BUDGET).select().all();
           toolData = records.map(r => r.fields);
         } else if (call.name === "webSearch") {
           const query = (call.args as any).query;
@@ -140,6 +149,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(200).json({ text: response.text });
   } catch (error: any) {
     console.error(error);
-    return res.status(500).json({ error: error.message });
+    return res.status(500).json({ error: error.message, stack: error.stack });
   }
 }

@@ -4,7 +4,12 @@ import axios from 'axios';
 import base, { TABLES } from '../lib/airtable';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
-  if (req.method !== 'POST') return res.status(405).send('Method Not Allowed');
+  res.setHeader('Content-Type', 'application/json');
+  
+  if (req.method !== 'POST') {
+    res.setHeader('Allow', ['POST']);
+    return res.status(405).json({ error: 'Method Not Allowed' });
+  }
 
   const { messages } = req.body;
   let apiKey = process.env.GEMINI_API_KEY;
@@ -28,7 +33,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
 
     if (cleanedMessages.length === 0) {
-      return res.json({ text: "Bonjour Marc ! Comment puis-je vous aider ?" });
+      return res.status(200).json({ text: "Bonjour Marc ! Comment puis-je vous aider ?" });
     }
 
     const getCatalogue = {
@@ -68,7 +73,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       model: "gemini-3-flash-preview",
       contents: cleanedMessages,
       config: {
-        systemInstruction: "Tu es Douly CFO, l'assistant financier expert de DOULIA. Ton rôle est d'analyser les données financières de Marc pour l'aider à piloter son entreprise au Cameroun. Tu as accès aux tables Airtable (Clients, ROI, Documents, Facturation) et à une recherche web via Tavily pour des infos externes. RÈGLES DE RÉPONSE : 1. Tu DOIS répondre à TOUTES les questions de l'utilisateur de manière exhaustive. 2. Si une question concerne les données de l'entreprise (clients, devis, catalogue), utilise les outils Airtable. 3. Si une question nécessite des informations externes, récentes ou web (fiscalité, actualités, tendances), utilise l'outil webSearch. 4. Mets les TITRES et MOTS CLÉS en GRAS en utilisant la syntaxe __mot__. 5. INTERDICTION FORMELLE d'utiliser des balises HTML. 6. INTERDICTION d'utiliser les caractères spéciaux suivants : # (dièse), * (astérisque). 7. Sois ultra-professionnel, précis et encourageant. 8. Tes réponses doivent être aérées et faciles à lire.",
+        systemInstruction: "Tu es Douly CFO, l'assistant financier expert de DOULIA. Ton rôle est d'analyser les données financières de Marc pour l'aider à piloter son entreprise au Cameroun.",
         tools: [{ functionDeclarations: [getCatalogue, getClients, getDocuments, webSearch] }]
       }
     });
@@ -124,16 +129,15 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           }
         ],
         config: {
-          systemInstruction: "Tu es Douly CFO. Analyse les données fournies par l'outil et synthétise-les pour Marc. RÈGLES : 1. Réponds de manière complète. 2. Utilise __gras__ pour les titres. 3. Pas de # ou * ou HTML. 4. Ton pro et aéré."
+          systemInstruction: "Tu es Douly CFO. Analyse les données fournies par l'outil et synthétise-les pour Marc."
         }
       });
-      return res.json({ text: finalResponse.text });
+      return res.status(200).json({ text: finalResponse.text });
     }
 
-    return res.json({ text: response.text });
+    return res.status(200).json({ text: response.text });
   } catch (error: any) {
     console.error(error);
     return res.status(500).json({ error: error.message });
   }
 }
-

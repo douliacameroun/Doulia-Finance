@@ -12,6 +12,8 @@ import projetsHandler from "./api/projets";
 import simulationsHandler from "./api/simulations";
 import statsHandler from "./api/stats";
 import chatHandler from "./api/chat";
+import budgetHandler from "./api/budget";
+import airtableCheckHandler from "./api/airtable-check";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -28,6 +30,8 @@ async function createServer() {
   app.all("/api/simulations", simulationsHandler as any);
   app.all("/api/stats", statsHandler as any);
   app.all("/api/chat", chatHandler as any);
+  app.all("/api/budget", budgetHandler as any);
+  app.all("/api/airtable-check", airtableCheckHandler as any);
 
   // VITE MIDDLEWARE (DEV ONLY)
   const vite = await createViteServer({

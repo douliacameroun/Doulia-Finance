@@ -1,19 +1,20 @@
-import { VercelRequest, VercelResponse } from '@vercel/node';
-import base, { TABLES } from '../lib/airtable';
+// Import necessary modules
+import axios from 'axios';
 
-export default async (req: VercelRequest, res: VercelResponse) => {
-  try {
-    const records = await base(TABLES.CLIENTS).select({ maxRecords: 1 }).all();
-    res.status(200).json({ 
-      status: "ok", 
-      message: "Connexion Airtable réussie", 
-      count: records.length 
-    });
-  } catch (error: any) {
-    res.status(500).json({ 
-      status: "error", 
-      message: "Échec de la connexion Airtable", 
-      error: error.message 
-    });
-  }
+const AIRTABLE_API_URL = 'YOUR_AIRTABLE_API_URL';
+
+// Function to send data to Airtable
+const sendDataToAirtable = async (data) => {
+    try {
+        const response = await axios.post(AIRTABLE_API_URL, data, {
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+        return response.data;
+    } catch (error) {
+        throw new Error('Error sending data to Airtable: ' + error.message);
+    }
 };
+
+export default sendDataToAirtable;
